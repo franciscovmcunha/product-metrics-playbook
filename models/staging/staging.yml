@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: seeds
+    schema: "{{ target.schema }}"
+    tables:
+      - name: seed_orders
+      - name: seed_product_events
+      - name: seed_customers
+
+models:
+  - name: stg_orders
+    description: Typed, renamed orders — one row per order.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests: [not_null]
+
+  - name: stg_product_events
+    description: Typed, renamed product events — one row per event.
+    columns:
+      - name: event_id
+        tests: [unique, not_null]
+
+  - name: stg_customers
+    description: Typed, renamed customers — one row per customer.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]

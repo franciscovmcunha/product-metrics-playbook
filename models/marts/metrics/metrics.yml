@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: metric_dau_wau_mau
+    description: Distinct active customers in the trailing 1/7/30-day windows. See docs/metrics_glossary.md.
+  - name: metric_conversion
+    description: Share of sessions (int_sessions) that include ≥1 order.
+  - name: metric_retention
+    description: >
+      Share of customers active in period n who are also active in period
+      n+1, where a period is `var('retention_period_days')` days.
+    columns:
+      - name: retention_rate
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+  - name: metric_churn
+    description: 1 − metric_retention, same period definition.
+  - name: metric_arpu
+    description: fct_orders revenue ÷ distinct active customers, per period.
+  - name: metric_aov
+    description: fct_orders revenue ÷ number of orders, per period.

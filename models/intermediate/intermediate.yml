@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: int_sessions
+    description: >
+      Groups stg_product_events into sessions. A session boundary is a gap of
+      `session_gap_minutes` (dbt_project.yml vars) with no event — the single
+      definition every model that needs a session reads from.
+  - name: int_order_items
+    description: Flattens stg_orders to item-level granularity for marts that need it.

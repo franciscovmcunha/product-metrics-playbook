@@ -1,0 +1,37 @@
+name: product_metrics
+version: "1.0"
+config-version: 2
+
+profile: product_metrics
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+analysis-paths: ["analyses"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  product_metrics:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      core:
+        +materialized: table
+        +schema: marts
+      metrics:
+        +materialized: table
+        +schema: marts
+
+vars:
+  # Single source of truth for what counts as a "period" across every metric
+  # model — see docs/metrics_glossary.md, "Why period definitions matter".
+  retention_period_days: 30
+  session_gap_minutes: 30

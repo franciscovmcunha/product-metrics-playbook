@@ -1,0 +1,9 @@
+event_id,customer_id,event_ts,event_type
+E-1,C-001,2026-01-05T09:58:00,view_product
+E-2,C-001,2026-01-05T09:59:30,add_to_cart
+E-3,C-001,2026-01-05T10:00:00,checkout
+E-4,C-002,2026-01-06T14:28:00,view_product
+E-5,C-002,2026-01-06T14:30:00,checkout
+E-6,C-003,2026-01-08T16:40:00,view_product
+E-7,C-003,2026-01-08T16:45:00,checkout
+E-8,C-005,2026-01-12T08:00:00,view_product

@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: One row per customer, enriched with signup cohort.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: fct_orders
+    description: One row per order — the fact table every revenue metric reads from.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: amount
+        tests: [not_null]
+
+  - name: fct_product_events
+    description: One row per product event — the fact table every engagement metric reads from.
+    columns:
+      - name: event_id
+        tests: [unique, not_null]
