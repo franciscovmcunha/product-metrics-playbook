@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# dbt
+target/
+dbt_packages/
+logs/
+dbt/profiles.yml
+
+# Defensive — this project uses synthetic seeds only, but keep the same
+# guard as every other repo in case that ever changes.
+data/raw/*
+!data/raw/.gitkeep
