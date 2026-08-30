@@ -11,7 +11,8 @@ __pycache__/
 target/
 dbt_packages/
 logs/
-dbt/profiles.yml
+profiles.yml
+.user.yml
 
 # Defensive — this project uses synthetic seeds only, but keep the same
 # guard as every other repo in case that ever changes.

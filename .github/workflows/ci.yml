@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: dbt
+          POSTGRES_PASSWORD: dbt
+          POSTGRES_DB: product_metrics_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dbt"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: pip install dbt-postgres==1.7.13
+
+      - name: Write CI profile
+        run: |
+          cat > profiles.yml <<'EOF'
+          product_metrics:
+            target: ci
+            outputs:
+              ci:
+                type: postgres
+                host: localhost
+                user: dbt
+                password: dbt
+                port: 5432
+                dbname: product_metrics_ci
+                schema: public
+                threads: 4
+          EOF
+
+      - name: dbt deps
+        run: dbt deps
+        env:
+          DBT_PROFILES_DIR: .
+
+      - name: dbt seed
+        run: dbt seed
+        env:
+          DBT_PROFILES_DIR: .
+
+      - name: dbt run
+        run: dbt run
+        env:
+          DBT_PROFILES_DIR: .
+
+      - name: dbt test
+        run: dbt test
+        env:
+          DBT_PROFILES_DIR: .

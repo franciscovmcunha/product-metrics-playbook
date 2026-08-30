@@ -1,0 +1,17 @@
+# Copy this to `profiles.yml` in the repo root (gitignored) and run dbt with
+# `--profiles-dir .`, or export DBT_PROFILES_DIR=. — or copy it to
+# ~/.dbt/profiles.yml, dbt's default lookup location. See README.md,
+# "Running this project".
+
+product_metrics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DBT_HOST', 'localhost') }}"
+      user: "{{ env_var('DBT_USER', 'postgres') }}"
+      password: "{{ env_var('DBT_PASSWORD', '') }}"
+      port: "{{ env_var('DBT_PORT', '5432') | as_number }}"
+      dbname: "{{ env_var('DBT_DBNAME', 'product_metrics_dev') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'public') }}"
+      threads: 4
