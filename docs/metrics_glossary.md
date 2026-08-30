@@ -6,7 +6,7 @@ this glossary documents intent; the model is the source of truth for the exact S
 | Metric | Definition | Model |
 |---|---|---|
 | DAU / WAU / MAU | Distinct customers with ≥1 product event in the trailing 1 / 7 / 30 days | `metric_dau_wau_mau` |
-| Conversion rate | Share of sessions (`int_sessions`) that include at least one order | `metric_conversion` |
+| Conversion rate | Share of sessions (aggregated from `fct_product_events`) that include at least one order, by month | `metric_conversion` |
 | Retention | Share of customers with an order in period *n* who also order in period *n+1* | `metric_retention` |
 | Churn | 1 − retention, for the same period definition | `metric_churn` |
 | ARPU | Total revenue in a period ÷ distinct active customers in that period | `metric_arpu` |
