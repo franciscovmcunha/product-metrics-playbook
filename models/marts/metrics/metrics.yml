@@ -3,21 +3,69 @@ version: 2
 models:
   - name: metric_dau_wau_mau
     description: Distinct active customers in the trailing 1/7/30-day windows. See docs/metrics_glossary.md.
+    columns:
+      - name: activity_date
+        tests: [unique, not_null]
+      - name: mau
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
   - name: metric_conversion
-    description: Share of sessions (int_sessions) that include ≥1 order.
+    description: >
+      Share of sessions (aggregated from fct_product_events) that include
+      ≥1 order, by calendar month.
+    columns:
+      - name: conversion_rate
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
   - name: metric_retention
     description: >
       Share of customers active in period n who are also active in period
-      n+1, where a period is `var('retention_period_days')` days.
+      n+1, where a period is `var('retention_period_days')` days. See
+      macros/periods.sql for the shared period definition.
     columns:
+      - name: period_index
+        tests: [unique, not_null]
       - name: retention_rate
         tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
   - name: metric_churn
-    description: 1 − metric_retention, same period definition.
+    description: >
+      1 − metric_retention, same period definition — built directly on
+      metric_retention's output rather than recomputed; see the model file
+      for why that's the one intentional exception to metrics-only-reads-
+      marts/core.
+    columns:
+      - name: period_index
+        tests: [unique, not_null]
+      - name: churn_rate
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
   - name: metric_arpu
-    description: fct_orders revenue ÷ distinct active customers, per period.
+    description: >
+      fct_orders revenue ÷ distinct active customers, per period (same
+      period definition as metric_retention).
+    columns:
+      - name: period_index
+        tests: [unique, not_null]
+      - name: arpu
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
   - name: metric_aov
-    description: fct_orders revenue ÷ number of orders, per period.
+    description: >
+      fct_orders revenue ÷ number of orders, per period (same period
+      definition as metric_retention).
+    columns:
+      - name: period_index
+        tests: [unique, not_null]
+      - name: aov
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
