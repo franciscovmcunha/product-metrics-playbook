@@ -5,6 +5,29 @@ models:
     description: >
       Groups stg_product_events into sessions. A session boundary is a gap of
       `session_gap_minutes` (dbt_project.yml vars) with no event — the single
-      definition every model that needs a session reads from.
+      definition every model that needs a session reads from. Event-grain
+      (same grain as stg_product_events), with the session it belongs to
+      attached, so marts can carry session boundaries onto every event.
+    columns:
+      - name: event_id
+        tests: [unique, not_null]
+      - name: session_id
+        tests: [not_null]
   - name: int_order_items
-    description: Flattens stg_orders to item-level granularity for marts that need it.
+    description: >
+      Flattens stg_orders.items (a pipe-delimited "product_id:qty:unit_price"
+      string) to one row per line item, for marts that need item-level
+      granularity.
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: product_id
+        tests: [not_null]
+      - name: quantity
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+      - name: item_revenue
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0

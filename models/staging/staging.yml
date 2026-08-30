@@ -1,12 +1,11 @@
 version: 2
 
-sources:
-  - name: seeds
-    schema: "{{ target.schema }}"
-    tables:
-      - name: seed_orders
-      - name: seed_product_events
-      - name: seed_customers
+# No `sources:` block here on purpose: seed_orders/seed_product_events/
+# seed_customers are dbt seeds, loaded by `dbt seed` and referenced with
+# `ref()` like any other model — not raw tables an external EL tool lands,
+# which is what dbt's `source()` is for. A seed declared as a source would
+# parse without error but would be a technically wrong description of what
+# it is.
 
 models:
   - name: stg_orders
@@ -16,15 +15,31 @@ models:
         tests: [unique, not_null]
       - name: customer_id
         tests: [not_null]
+      - name: amount
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: items
+        description: >
+          Opaque pipe-delimited "product_id:qty:unit_price" string — see
+          int_order_items, the one model that parses this.
+        tests: [not_null]
 
   - name: stg_product_events
     description: Typed, renamed product events — one row per event.
     columns:
       - name: event_id
         tests: [unique, not_null]
+      - name: event_type
+        tests:
+          - accepted_values:
+              values: ["login", "view_product", "add_to_cart", "checkout"]
 
   - name: stg_customers
     description: Typed, renamed customers — one row per customer.
     columns:
       - name: customer_id
         tests: [unique, not_null]
+      - name: country
+        tests: [not_null]

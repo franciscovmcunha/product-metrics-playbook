@@ -12,11 +12,31 @@ models:
     columns:
       - name: order_id
         tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
       - name: amount
-        tests: [not_null]
+        description: The order's own recorded amount — see also `computed_revenue`.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: computed_revenue
+        description: >
+          Sum of int_order_items.item_revenue for this order — should always
+          equal `amount`; see tests/assert_fct_orders_amount_matches_items.sql.
 
   - name: fct_product_events
     description: One row per product event — the fact table every engagement metric reads from.
     columns:
       - name: event_id
         tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
